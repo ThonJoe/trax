@@ -79,6 +79,32 @@ def AtariCnnBody(n_frames=4, hidden_sizes=(32, 64, 64),
   )
 
 
+def AtariJointCnnBody(n_frames=4,
+                      hidden_sizes=(32, 64, 64),
+                      output_size=512,
+                      mode='train'):
+  """An Atari CNN."""
+  del mode
+
+  # TODO(jonni): Include link to paper?
+  # Input shape: (B, T, H, W, C)
+  # Output shape: (B, T, output_size)
+  return tl.Serial(
+      tl.Fn(lambda x: x / 255.0),  # Convert unsigned bytes to float.
+      _FrameStack(n_frames=n_frames),  # (B, T, H, W, 4C)
+
+      tl.Conv(hidden_sizes[0], (8, 8), (4, 4), 'SAME'),
+      tl.Relu(),
+      tl.Conv(hidden_sizes[1], (4, 4), (2, 2), 'SAME'),
+      tl.Relu(),
+      tl.Conv(hidden_sizes[2], (3, 3), (1, 1), 'SAME'),
+      tl.Relu(),
+      tl.Flatten(n_axes_to_keep=1),  # B, T and rest.
+      tl.Dense(output_size),
+      tl.Relu(),
+  )
+
+
 def FrameStackMLP(n_frames=4, hidden_sizes=(64,), output_size=64,
                   mode='train'):
   """MLP operating on a fixed number of last frames."""

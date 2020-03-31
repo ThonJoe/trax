@@ -59,7 +59,7 @@ class ActorCriticJointTrainer(rl_training.RLTrainer):
     self._supervised_eval_steps = supervised_eval_steps
     self._collect_per_epoch = collect_per_epoch
     self._max_slice_length = max_slice_length
-    self._policy_dist = distributions.create_distribution(task.env.action_space)
+    self._policy_dist = distributions.create_distribution(task.action_space)
 
     # Inputs to the joint model are produced by self.batches_stream.
     self._inputs = supervised.Inputs(
